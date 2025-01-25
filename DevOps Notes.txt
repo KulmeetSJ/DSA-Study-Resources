@@ -1,0 +1,737 @@
+--------------Git & Github-------------------->
+
+mkdir Devops
+
+git init
+
+git status
+
+#To commit something we use
+
+git commit -d "added file1"
+
+git config --global user.email "singhkulmeet3@gmail.com"
+git config --global user.email "Kulmeetcodez"
+
+
+
+
+
+----------------------------Apache Web Server------------------>
+
+To run all these in cmd we can use
+
+ssh -i <path-to-aws-passfile> <user>@<server>
+
+systemctl start apache
+
+systemctl enable apache
+
+apache is name of session
+
+hostnamectl set-hostname new hostname
+# helps us chnage hostname in apache
+
+sudo apt install apache2
+
+sudo apt-get apache2
+
+
+sudo systemctl status apache2
+
+sudo systemctl start apache2
+
+sudo systemctl restart apache2
+
+sudo systemctl reload apache2
+
+sudo systemctl disable apache2
+
+sudo systemctl enable apache2
+
+#Now you can open the IP address , it will show default apache web server
+web page..make sure to remove s from https link when you open your IP
+otherwise it won't open
+
+sudo systemctl stop apache2
+
+#Visit the directory where index.html is stored
+
+cd var/www/html/index.html
+
+#Now if you want to change what you want to display on website, type
+
+sudo mv /var/www/html/index.html /var/www/html/index.html.bak
+
+# Create a new welcome file
+
+sudo nano /var/www/html/index.html
+
+# Type some text in that file
+and then reload the website, it should change
+
+#Making a site for apache
+
+sudo mkdir -p /var/www/html/test
+
+#Giving the new directory the proper ownership
+
+sudo chown -R $USER:$USER /var/www/html/test
+
+#We will grant permissions with the command
+
+sudo chmod -R 755 /var/www/html/test
+
+#Copying new index.html to test directory with the command
+
+sudo cp /var/www/html/index.html /var/www/html/test/
+
+#Creating a virtual host configuration so that Apache knows where test is:
+
+sudo nano /etc/apache2/sites-available/test.conf
+
+#Paste the following in that file
+
+ServerAdmin admin@example.com
+ServerName example.com
+ServerAlias www.example.com
+DocumentRoot /var/www/html/test
+ErrorLog ${APACHE_LOG_DIR}/error.log
+CustomLog ${APACHE_LOG_DIR}/access.log combined
+
+
+#Now type this command to enable virtual host
+
+sudo a2ensite test.conf
+
+#Use ln for other flavors
+
+sudo systemctl reload apache2
+
+#Now reload the website
+
+
+-------------------------------Docker---------------------->
+
+container - a way to package application with all the necessary dependencies.
+one command to install app
+own isolated environment 
+packed with all needed configuration
+
+Docker is a software platform that allows you to quickly build,test and deploy applications quickly, packaging
+software into standardized uints called containers.
+
+-->create instance and run a session
+and type these commands
+
+sudo yum install docker -y
+docker --version
+docker image ls
+#it will show some daemon error ..s
+
+#daemon (dockerd) listens for docker api requests and manages Docker objects
+#such as images,containers,networks nad volumes.
+
+systemctl status docker
+
+systemctl start docker
+
+docker image ls
+
+#it will not show errors now
+
+
+sytemctl enable docker 
+
+#docker ki dunia me OS ko image bolte hai
+
+docker pull ubuntu:latest
+
+docker image ls
+
+docker run ubuntu:latest
+
+docker pull ubuntu:latest
+
+docker run -it ubuntu:latest
+
+docker ps 
+-->checks no. of container in running state
+
+
+docker ps -a
+--> lists all container os whether running or not
+
+
+
+#it is for interactive os
+docker run -it --name os1 ubuntu:latest
+
+Dockerhub is a cloud base repo in which docker 
+users and partners create,test and distribute container images.
+
+docker pull centos
+#by default it will install latest version
+
+docker pull centos:7
+# now it installs version 7
+
+docker image ls
+
+docker run -it --name os1 centos:7
+
+echo "hello! Day of Devops,"
+
+exit
+
+docker restart <id of os ..u can see id using docker ps>
+
+#This will start the os but you will not enter its terminal
+
+docker ps
+
+docker exec -it os1 bash
+#to go to os' terminal
+#exec helps us to enter OS ... we only use run for new OS
+
+exit 
+#to exit terminal
+
+docker ps
+# now it lists 2 containers running
+
+docker rm os1
+# to delete OS...if OS is in running state it will show error
+
+docker stop os1
+# to stop OS .. now run delete command
+
+docker rm os1
+# not shows error
+
+docker ps -a
+#os1 is deleted
+
+docker rm -f os1
+#This command is used to delete OS forcefully..even if it is running currently
+
+docker rm -f os1 os2 os3
+#deletes all os
+
+docker image ls
+
+docker rmi hello-world
+#deletes images
+
+docker image ls
+
+#docker image lists all images 
+#docker ps lists all containers
+
+docker run -dit centos:7
+# it will start running new os but will not enters its terminal
+
+docker inspect <container id>
+# shows all information about the container
+
+
+dockerfile - it is possible to build your images reading instructions from a Dockerfile
+
+Now we will create a dockerfile
+
+mkdir web
+cd web/
+vim Dockerfile 
+#D should be captial
+
+Now inside Dockerfile we will write these
+
+Step 1-->
+FROM ubuntu:latest
+# works same as pull command in docker
+
+Step 2-->
+
+RUN apt-get update
+# RUN commands help us run normal terminal commands inside Dockerfile
+
+RUN apt-get install apache2 -y
+
+EXPOSE 80
+# used to open Port 80 for websites
+
+CMD ["apache2ctl","-D","FOREGROUND"]
+
+
+Now save this file
+
+ls
+
+docker build -t hackcoderr/apache2:v1 .
+# t for tag..means what name we want to give to image
+#it will give some errors(it will ask us to set geoloccation)
+so to resolve this we will again go in our dockerfile
+using this command
+
+vim Dockerfile
+
+# Now add this before EXPOSE 80
+
+RUN apt-get install apache2-utils -y
+
+RUN apt-get clean
+
+#Add environment variables in docker file before RUN apt-get install apache2 -y command
+
+ENV DEBIAN_FRONTED=noninteractive
+
+Now save and exit and run the last command again i.e. -->
+docker build -t hackcoderr/apache2:v1 .
+#This will create our image
+# . represents where my DockerFile is located..we used . because our file is
+ in the same directory..if it is in some other directory we add path instead 
+of .
+
+
+
+docker image ls
+#it will list our image that we created
+
+
+docker run -dit --name apacheweb hackcoderr/apache2:v1
+
+
+docker exec -it apacheweb bash
+
+ls 
+
+cd /var/www/html/
+
+
+
+docker run -dit --name apacheweb1 -p 80:80 hackcoderr/apache2:v1
+#This will create 
+
+
+ls
+cd web/
+
+vim index.html
+
+#Add some code in index.html
+
+Now we will make some changes in dockerfile and add copy command
+
+COPY index.html /var/www/html
+
+now save it
+
+docker build -t hackcoderr/apache:v1 .
+
+#It will list and run all instructions 
+
+docker run -dit --name apacheweb -p 80:80 hackcoderr/apache2:v1
+
+
+
+curl -i http://localhost 
+# Lists what is running on our website
+
+
+
+---------------------VPC------------------->
+
+REGION -->
+AWS has the concept of a region,which is a physical location around the world
+where we cluster data centers. We call each group of logical data centers an 
+Availability zone.
+
+Availability zone-->
+Availabilty zone is one or more discrete data centers with redundant power,networking 
+and connectivity in an AWS Region.
+
+VPC -->
+Virtual Private Cloud (Amazon VPC) enables you to launch AWS resources into a 
+virtual network that you have defined. This virtual network closely resembles a
+traditional network that you'd operate in your own data center,with the benefits
+of using the scalable infrastructure of AWS.
+
+Subnet--> 
+A portion of a network that shares a common address component. On TCP/IP networks,
+subnets are defined as all devices whose IP Addresses have same prefix.For e.g-
+all devices with IP Addresses that start with 100.100.100 would be part of the same subnet.
+Dividing a network into subnets is useful for both security and performance reasons.
+IP networks are divided using a subnet mask.
+
+
+Creating a new vpc steps-->
+
+Step 1-> Choose location
+Step 2-> Give a name tag --> e.g my-vpc-1
+Step 3-> IPv4 CIDR --> 10.0.0.0/16 
+# We will create our private environment in this IP Range only
+Step 4-> Click on Create VPC
+
+Create a new subnet now-->
+
+Step 1->Choose its vpc
+Step 2->Subnet name --> my-subnet-1
+Step 3-> Choose availabiltiy zone --> ap-south-1a
+Step 4-> Choose IPv4 CIDR range --> 10.0.1.0/24
+Step 5-> Create this subnet
+Step 6-> Create another subnet with different name and different availabilty 
+zone with same steps as above.
+Step 7-> IPv4 CIDR range --> 10.0.2.0/24
+
+
+Internet Gateway-->
+Internet gateway is simpy a physical place where data stops either
+
+
+Route table -> 
+Contains a set of rules,called routes ,that are used to determine where 
+network traffic from your subnet 
+
+
+
+Create Internet Gateway-->
+Step 1-> Name tag --> my-igw
+Step 2-> Create it
+It is detached..attach it with vpc , then status will be attached
+
+Create Route table-->
+Step 1-> name --> my-route-table
+Step 2-> Select vpc
+Step 3-> Create Route table 
+
+Edit routes-->
+0.0.0.0/0
+Target --> my-igw 
+# Internet gateway we created
+
+Subnet Association -->
+Attach both subnets that you created.
+
+Enable auto asign IpV4 address by going to subnet settings 
+
+
+IAM-->
+Identity and Access Management
+Add user in it
+Username - devops-team
+Create user
+Download access key id and sescret access key so that you can share it with
+your team to access your IP.
+Also add it to a group and give it permissions of Administrator access
+
+Create your own security group-->
+Inbound rules --> All Traffic    Source - anywhere access
+
+Create a instance using these settings
+
+
+-----------------------------Terraform------------------------>
+
+Terraform is a tool of choice to manage the entire lifecycle of 
+infrastructure using infrastructure as code. That means declaring 
+infrastructure components in configuration files that are then used by
+Terraform to provision,adjust and tear down infrastructure in various
+cloud providers.
+
+Features of Terraform-
+i) Infrastructure as a code
+ii)Remote execution
+iii)Graph of Resources
+iv)Automation of Change
+
+Use cases of Terraform-->
+Public cloud provisioning
+Infrastructure as a code
+Multicloud deployments
+
+Installation Method-->
+For installation go to -->>learn.hashicorp.com  for commands
+
+sudo apt-get install terraform
+
+Pre-Requisites
+Terraform CLI installed
+AWS CLI installed
+
+Go to link given and install AWS CLI following the steps given
+in the prerequisites
+
+docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html
+
+sudo apt install awscli
+
+aws configure
+
+aws configure --profile hackcoderr
+Enter Acess Key Id And Secret Acess key
+And region = ap-south-1
+
+aws configure list
+#lists all the Profiles
+
+Google search--> terraform aws provider for commands
+
+mkdir terraform
+cd terraform/
+vim main.tf
+
+In main.tf-->(write these commands)
+
+provider "aws"{
+ region = "ap-south-1"
+ profile = "kulmeet"
+}
+
+Save and exit
+
+ls -a
+#lists main.tf
+
+terraform init
+#Terraform will be successfully initialized
+
+ls -a
+#New terraform folders will be created
+
+cd .terraform/
+ls
+#Go to all subfiles and explore them
+
+Add this to main.tf
+
+resource "aws_instance" "devops-vm"{
+ ami = " "
+instance_type = " "
+subnet_id = " "
+vpc_security_group_ids = [" "]
+key_name = "KuliUbuntu"
+tags ={
+ Name = "devops-test-vm"
+}
+}
+
+#Save and exit
+
+terraform validate
+# It will show errors if any , if not instance will be created 
+successfully
+
+terraform plan 
+# It plots a graph for us displaying all information about our instance
+
+terraform apply
+#All the changes will be applied ..type yes 
+#Now your instance have been created , and if you open your aws instances portal,
+new instance will be listed there.
+
+or 
+
+terraform apply --auto-approve
+# All the changes will be applied automatically in the website
+
+
+terraform destroy
+#Deletes all the resources of the instance you created
+
+
+-------------------------Jenkins----------------------->
+
+It helps automate the parts of software development related to building to
+building,testing,and deploying, facilitating continuous integration and 
+continuous delivery.
+
+Jenkins is an open-source automation server. It helps automate the parts of
+software development related to building,testing,and deploying ,facilitatiing
+continuous integration and continuous delivery (CI/CD). It is a server based system 
+that runs in
+
+Features -->
+Easy Installation
+Easy COnfiguration
+Avaiable Plugins
+Extensible
+Easy Distribution
+Free Open Source
+
+Applications -->
+1. Increased Code Coverage
+2. No Broken Code
+
+
+Continuous Integration and Continuous Delivery-->
+CI/CD is a method to frequently deliver apps to customers by introducing automation
+in the stages of app development. The main concepts attributed to CI/CD are 
+continuous integration, continuous delivery and continuous deployment.
+
+Jenkins is a tool based on Java.
+
+
+Installing Jenkins -->
+
+https://www.jenkins.io/doc/tutorials/tutorial-for-installing-jenkins-on-AWS/
+
+Do all process 
+and then go to public ip of your instance
+It will ask your password , and also provide path for your password
+Enter your password.
+
+Now , Install suggested plugins
+After Installation Set Username and password
+
+It will give us url
+
+Click on Start using Jenkins
+Jenkins Dashboard is open for us now .
+
+Discussing Component of Jenkins Dashboard -->
+
+Items --> 
+Enter Item name -- first-project
+Choose Freestyle project
+
+Build Stage -- Execute Shell
+
+Type --
+
+echo "hello! world ,"
+mkdir jenkins 
+ls
+
+Now save and apply
+
+Our project will be displayed in the dashboard now.
+
+Choose build now go on output console
+Output will be displayed to us.
+
+It will show us path go to that path in mobaxterm
+
+cd /var/lib/jenkins/workspace/
+
+ls
+
+cd first-project/
+ls
+
+Create a file vim first.sh
+
+#!bin/bash
+echo "hello !world"
+
+Save and exit
+
+Run it uisng ./first.sh or chmod +x ./first.sh
+
+
+Now we will check whether jenkins is created or not...
+
+cd /var/lib/jenkins/workspace/first-project
+ls
+
+jenkins folder which we created will be displayed
+
+Now we will again go to website and try to add errors in the code that you wrote
+and then save and apply it.
+Now Click on Build Now.
+It won't build this time because we added errors
+Now configure
+
+Make 2 3 projects some with error builds , some with successfull builds
+
+all will show different icons.
+
+Now lets try linking github with Jenkins -->
+
+Create a new project named -- github-project
+Choose Freestyle Project
+
+Choose Github proect
+
+Now go to your github profile and create a new public repository named Jenkins .
+Copy its url and paste it in Github Project link they asked.
+
+Choose Source Code Management -- Git
+
+Paste repository url there.
+It will show failed to connect
+
+Branches to build -- */master
+
+Repository Browser -- (auto)
+
+Build Triggers --  Github hook tigger for GITscm polling
+
+Save and apply
+
+It will show error failed to connect .. Now we will configure it
+
+Go to Manage Jenkins 
+Plugin Manger
+Available
+CHeck whether Git plugin is installed or not, if not install it.
+
+Now go to your terminal and check whether git is insalled or not.
+
+Now apply and save it again.
+Build it
+
+
+Go to Github Repository Settings and Webhooks
+Add url of jenkins server in Payload URL
+
+http://url/github-webhook/
+
+#Webhook is used to display any change you make in the repository will be displayed in
+Your Jenkins webserver.
+
+COntent type --application/json
+
+Choose events according to your use. or select Just the push event
+
+Update webhook
+
+Now whatever change you make in your repo will be reflected in your Jenkins webserver
+and will build automatically.
+
+Now lets try all this in a private repository so that only few selected members can work on this
+
+Go to dashboard create new item
+
+private-github-project
+
+Choose freestyle project
+
+perform same steps as above 
+
+It will show failed to connect again
+
+Generate personal access token from github for ur repo
+
+Go to jenkins website and manage jenkins > COnfiguration system
+
+Scroll and look for GIthub servers ..add it
+
+Add secret token there
+Save it
+
+Now Manage credentials and generate a ssh key and add it there 
+
+ls
+
+ssh-keygen
+
+ls
+
+add private key in jenkins and public key in github
+
+.pub key is public
+
+Go to github SSH keys and add the public key there
+
+Now add the generated link
+

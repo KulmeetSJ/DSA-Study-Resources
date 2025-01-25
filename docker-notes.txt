@@ -1,0 +1,146 @@
+
+To bind localhost's port to docker host's port-->
+docker run -p6000:6379 redis 
+
+docker images -> Returns all the images we have in computer 
+
+docker logs -> displays logs of the running containers
+
+To give a custom name to container -->
+docker run -d -p6001:6379 --name redis-kulmeet
+
+
+docker exec -it <container_id>/<container_name> --> 
+Get the terminal of the running container , it means interactive version
+
+docker start --> Restarts the stopped container
+docker run --> Runs/starts the new container
+
+
+docker build . -t image_name - to build a docker image
+docker run -p 80:80 image_name --name "Name of container"
+
+
+docker network ls ---> Lists all networks 
+
+docker network create <network-name> -->Creates a network
+
+
+How does Docker works in real life development process?
+
+Develop ---> Git ---> Jenkins ----> Docker Repository  ---> Dev Server pulls images
+
+Let's understand in detail,
+
+
+1. Develop a simple JS app having a MongoDB database , for the MongoDB database, we don't want to setup it from scratch in our pc , instead we will pull its image from the Docker Hub
+
+App is running on PORT = 3000 
+
+Search for mongoDB database on the docker hub
+
+Create a mongo network which will help two containers to interact with each other by just using the container name 
+
+Run this command to start mongo 
+
+docker run -p 27017:27017 -d -e MONGO_INITDB_ROOT_USERNAME=admin -e MONGO_INITDB_ROOT_PASSWORD=pass --name mongod --net mongo-network mongo 
+
+
+Run this command to start mongo-express
+
+docker run -d -p 8082:8081 -e ME_CONFIG_MONGODB_ADMINUSERNAME=admin -e ME_CONFIG_MONGODB_ADMINPASSWORD=pass --net mongo-network --name mongo-express-kulmeet2 -e ME_CONFIG_MONGODB_SERVER=mongokulmeet mongo-express 
+
+
+
+WE can make the above process simpler by using docker-compose 
+
+WE will map the whole command with configuration and map it into a file name docker-compose.yml
+
+We don't need to create separate network in this docker-compose, it takes care of it on its own 
+
+Run this command to execute .yaml file 
+
+docker-compose -f docker-compose.yaml up 
+
+
+
+
+
+
+
+
+Creating a DockerFILE
+
+1. Copy artifacts(jar,war,bundle.js)
+
+Dockerfile is a blueprint of an image
+
+Whenever we build our own Dockerfile , we base it on some pre-existing image on Dockerhub 
+So we write
+
+FROM node:13-alpine
+
+RUN allows us to run any type of linux commands
+
+RUN mkdir -p /home/app
+
+COPY . /home/app ---> Copy all files (.) into /home/app
+
+Now to start the app with node server.js 
+
+CMD ["node","server.js"]
+
+
+
+How to build image using Docker file?
+
+
+docker build -t my-app:1.0 . 
+
+
+. specifies location of Dockerfile , which is current directory in our case 
+
+
+
+
+Pushing our build Docker image into repo 
+
+
+1. Create private docker repo  i.e. docker registry
+
+
+
+
+
+
+Docker Volumes ---> 
+
+For data persistence 
+
+
+docker run -v /host_directory:/container_directory
+
+
+OR 
+
+docker run -v /container_directory
+
+
+OR 
+
+docker run -v /host_directory  
+
+
+Most used is Named volumes 
+
+
+
+
+
+
+
+
+
+
+
+ 

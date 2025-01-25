@@ -1,0 +1,567 @@
+Linux Commands -->
+
+ls
+
+ls -l  --> list long more detailed
+ls -r --> list reverse
+ls -rl --> long reverse list
+
+aptitude moo --> Random but fun
+aptitude -v moo --> This -v command means variety and it is an option.
+
+Commands //options //arguments
+
+eg -> ls Documents --> Documents is an argument
+
+ls -l --> -l is an option
+
+Both can be given at same time.
+
+aptitude -vv moo 
+
+
+pwd --> print working directory
+
+cd Documents
+
+cd / --> Root directory
+cd /sysadmin/home --> Home directory
+
+d - directory
+- --> regular file
+l -- Symbolic link - points to another file
+s --> socket -- allows for communication bw processes
+p --> pipe -- allws for comms bw processes
+b --> block file -- used to communicate with hardware
+c --> character file -- used to communicate with hardware
+
+ls -l /var/log
+
+
+ls -lt /var/log --> Sorts by time
+
+ls -l -S /var/log --> Sorts by space
+
+ls -lSr /var/log -->Sorts by space reversed
+
+Admin Access-->
+su command allows to act as a different user by creating a new shell.
+
+su -
+su -l
+su -login
+
+Utilizing the login shell option is recommended,as the login shell fully configures the new shell with the settings of the new user.
+
+sl command - for steam locomotive ..you can use as a root user only
+
+sudo sl
+
+Permissions -->
+
+ls -l hello.sh
+
+Output will be 
+-rw-r--r-- l sysadmin ...
+
+
+#lists the files
+- indicates that it is a regular file
+if it would have been d then it would have been a directory
+
+rw-r--r-- is the permissions field
+
+rw- tells the user who owns the file
+
+r-- tells the group that owns the file
+
+2nd r-- is for everyone else , anyone who that first 2 sets of permissions do not apply to.
+
+3 types of permissions -->
+r- read
+w- write 
+x- execute
+
+
+Changing FILE PERMISSIONS -->
+
+chmod 
+
+Only root user can change
+chmod means change the modes of access
+
+2 techniques for changing permissions -->
+symbolic and octal
+symbolic is good for changing 1 set of permissions at a time.
+octal method requres knowledge of the octal value of each of the permissions and requires all 3 sets of permissions to be specified everytime.
+
+
+symbolic method ->
+
+chmod [<SET><ACTION><PERMISSIONS>]... FILE
+
+u - user
+g - group
+o - others
+a - all
+
++ add the permission
+= specify the exact permission
+- remove the permission
+
+r - read
+w - write
+x - execute
+
+chmod u+x hello.sh
+
+Now we can execute hello.sh using this command
+
+./hello.sh
+
+
+In executing command ./ indicates the command should be run from the command directory.
+
+
+Changing File Ownership----->
+
+chown command
+changing user owner requires admin access
+changing group ownership does not require admin access
+
+chown [OPTIONS] [OWNER] FILE
+
+by default sysadmin owns all the files
+
+Change it by
+
+sudo chown root hello.sh
+
+
+Viewing Files-->
+
+cat command stands for concatenate 
+
+displays the entire contenrs of the files
+Mainly recommened for smaller files where output is limited and does not require scrolling.
+
+cat [OPTIONS] [FILE]
+
+cat animals.txt
+
+To view large text files use pager commands that can pause and scroll through the output of the file.
+Pager commands are more and less commands
+
+Another way to view contents of file is by using head and tail commands.
+Only shows few lines of the files.
+
+head alpha.txt
+
+tail alpha.txt
+
+We can also specify number of lines we want to see
+
+head -n 5 alpha.txt
+tail -n 5 alpha.txt
+
+
+COPYING FILES-->
+
+cp [OPTIONS] SOURCE DESTINATION
+
+cp /ect/passwd .
+
+. is a shorcut which represents the current directory.
+
+In order to copy a file, it is necessary to have execute permission to access the directory where the file is located
+and the read permission for the file being copied.
+
+It is also necessary to have write and execute permission on the directory hte file is being copied to.
+There are 2 places where you should always have write and execute permisson on the directory
+i.e home directory and /tmp directory.
+
+
+dd command is a utility for copying files or entire partitions at the bit level.
+
+dp [OPERATION] OPERAND
+
+It can be used -
+-to clone or delete entire disks or partitions.
+-to copy raw data to removable devices.
+- backup and restore MBR{Master BOOT Record}.
+- create a file of a specific zie that is filled with binary zeros, which can be used as a swap file(virtual memory).
+
+cd ~
+dd if=/dev/zero of=/tmp/swapex bs=1M count=50
+
+if -- input fle 
+ /dev/zero file , a special file containing an unlimited number of zeros
+
+of -- output file
+
+bs -- Block size
+By default block size is in bytes , we can change using K,M,G, T
+
+
+count -- number of blocks to read from input file.
+
+No block size and count need to be specified when copying over entire devices.
+
+dd if=/dev/sda of=/dec/sdb
+
+
+MOVING FILES---------->
+
+mv SOURCE DESTINATION
+
+mv people.csv Work
+
+mv numbers.txt letters.txt alpha.txt School
+
+Moving a file within the same directory is an effective way to rename it.
+
+mv animals.txt zoo.txt
+
+Moving a file requres write and execute permissions on both origin and destination directories. 
+
+REMOVING FILES----->
+
+rm [OPTIONS] FILE
+
+
+Deleted files do not go into a trash can as with desktop-oriented operated systems.
+When file is deleted it is permanently gone.
+
+rm linux.txt
+
+To remove a directory use -r or -R options , it means recursive.
+
+rm -r Work
+
+
+Filtering Inputs--->
+
+grep [OPTIONS] PATTERN [FILE]
+
+grep command is a text filter that will search input and return lines which contain a match to a given pattern.
+
+cp /ect/passwd .
+
+This passwd file contains details of accounts on the system .
+This file can be very large, however the grep command can be used to filter out info about a specific user,such as the sysadmin user.
+
+grep sysadmin passwd
+
+This command returns the line from the passwd which contains the pattern sysadmin
+
+
+Regular Expressions -->
+
+They have 2 common forms -> basic and extended.
+
+Basic Regex characters  Meaning
+
+.                       Any one single character
+[ ]                     Any one specified character
+[^ ]                    Not the one specified characer
+*                       Zero or more of the previous character
+^                       If first character in the pattern
+$                       If last character in the pattern
+
+
+Extended Regex Characters  Meaning
+
++                          One or more of the previous pattern
+?                          Preceding pattern is optional
+{ }                        Specify min,max or exact matches
+|                          logical or
+( )                        To create groups
+
+
+grep sysadmin passwd
+
+This is use of literal characters
+
+grep 'root' passwd
+
+This is use of anchor characters 
+
+grep '^root' passwd
+
+cat alpha-first.txt
+
+cat 'r$' alpha-first.txt
+
+Returns characters having r in end
+
+grep 'r..f' red.txt
+
+Returns characters starting with r and ending with f
+
+grep '....' red.txt
+
+Returns characters with atleast 4 characters
+
+grep '[0-9]' profile.txt
+
+Returns lines having numbers
+
+grep '[^0-9]' profile.txt
+
+Returns lines with non numeric characters
+
+grep '[.]' profile.txt
+
+Returns lines with . in them
+
+
+grep 're*d' red.txt
+
+Match 0 or more occurences of e and returns characters
+
+We can give standard input  if file name is not given
+Press Ctrl+D to return
+
+grep 'red' 
+
+And then provide some input
+
+
+SHUTTING DOWN ----------->
+
+shutdown [OPTIONS] TIME [MESSAGE]
+
+Requires admin access
+
+shutdown now
+
+date
+
+shutdown 01:51
+
+shutdown +1 "Goodbye World!"
+
+
+NETWORK CONFIGURATION------------------>
+
+ifconfig stands for interface configuration and displays network configuration information
+
+ifconfig [OPTIONS]
+
+iwconfig is dedicated to wireless network interfaces.
+
+lo device is loopback device , which sends network-based data to itself
+
+ping command is used to verify connectivity between 2 computers.
+
+It sends packets to another machine on a network.
+
+ping -c 4 192.168.1.2
+
+
+VIEWING PROCESSES ---------------->
+
+Running a command results in some process.
+In linux , processes are executed with the privileges of the user who executes the command.
+
+ps is used to list processes
+
+ps [OPTIONS]
+
+PID - process identifiers which is unque to the process.
+TTY- the name of the terminal where the process is running.
+TIME- the total amount of processor time used by the process.
+CMD- The command that started the process
+
+ps displays processes running in the terminal
+
+ps -e displays process running in the system
+
+ps -ef is more detailed
+
+
+PACKAGE MANAGEMENT ------------->
+
+It is a system by which software can be installed,updated,removed or queried from a filesystem.
+2 popular package management systems are from Debiand and RedHat
+
+dpkg  is lowest level command of Debian package management system.
+
+apt-get a frontend program to the dpkg tool , makes management of packages even easier.
+
+sudo apt-get update
+
+
+To search keywords within these packages, use apt-cache search command
+
+apt-get install
+
+apt-get remove
+apt-get purge -- purges a package completely from the system
+
+UPDATING USER PASSWORDS-------------->
+
+passwd [OPTIONS] [USER]
+
+passwd
+
+passwd -S sysadmin
+
+
+sysadmin - name of user
+password status --> p indicates usable password
+                    l indicates locked password
+                    np indicates no password
+change date
+
+minimum --> min no of days that must pass before current password can be changed
+maximum --> max no of days for password to expire
+warn --> no of days prior to password expiry
+inactive --> no of days after password expire 
+
+
+
+
+REDIRECTION----------------->
+
+Adding contents to files
+
+We can use input/outpur (I/O) redirection , which allows for information in the command line to be sent to files,devices,and other commands.
+
+When it comes to command input or output there are 3 paths , or "tracks"
+These are file descriptors. 
+First file descriptor is STDIN -- information the command receives and processes when it is executed, essentially what a user types on a keyboard.
+Second file descriptor is STDOUT -- information that the command displays.
+Third is STDERR -- error messages generated by the command that are not correctly executed.
+
+
+To use redirection , use a greater-than symbol along with file name
+[COMMAND] > [FILE]
+
+cat food.txt > newfile1.txt
+
+echo "Hello"
+//Prints output in the terminal
+
+echo "I like food." > newfile.txt
+//This replaces all text in newfile
+
+echo " This food is good" >> newfile.txt
+// This add texts in newfile ,does not replace it
+
+//User must have write permission
+
+TEXT EDITOR-------->
+
+vi text editor
+
+tiny editor - nano
+massive editor - emacs 
+
+advantages of vi ->
+- available on every Linux 
+- can be executed both in CLI and GUI
+- New features have been added , but functions are same
+
+vi stands for visual 
+
+vim is improved version of vi
+vim works just like vi
+
+vi newfile.txt
+
+There are 3 modes used in vi:
+command mode, insert mode, ex mode
+
+Initiall program starts in command mode
+
+Command Mode-->
+Used to  type commands to move arround a document,manipulate text, and access the other 2 modes.
+To return to command mode press Esc Key
+
+In vi mouse is useless.
+
+movement commands in vi has 2 aspects,a motion and an optional number prefix, which indicates how many times to repeat that motion.
+
+[count] motion
+
+Motion           Result
+
+h                Left one character
+j                Down one line
+k                Up one line
+l                Right 1 character
+w                1 word forward
+b                1 word back
+^                Beginning of line
+$                End of Line
+
+These motions can be prefixed with a number to indicate how many times to perform the movement.
+Use CTRL + G to find out which line the cursor is currently on.
+
+Coomand Mode actions-->
+
+cut         d             delete
+copy        y             yank
+past        p|p           put
+
+action [count] motion
+
+Delete -->
+ Removes the text and saves it into the buffer
+ 
+dd  - delete current line
+3dd - delete next 3 lines
+dw - delete current word
+d3w - delete next 3 words
+d4h - delete 4 characters to the left
+
+Change -->
+text is removed and saved into buffer, however,the program is switched to insert mode to allow immediate changes to the text
+
+cc - change current line
+cw - change current word
+c3w - change next 3 words
+c5h - change 5 characters to the left
+
+Yank-->
+Places content into buffer without deleting it.
+
+yy - yank current line
+3yy - yank next 3 lines
+yw - yank current word
+y$ - yank to the end of line
+
+Put-->
+Places the text saved in the buffer
+P - paste after cursor
+p - paste before cursor
+
+Searching in vi -->
+
+CTRL+F
+
+To search forward from the current position of cursor , use the / to start search
+To search backward use ?
+
+Insert mode-->
+To add text in doc
+
+a - enter insert mode right after the cursor
+A - end of line
+i - right before cursor
+I - beginning og line
+o - blank line after cursor
+O - blank line before cursor
+
+Ex Mode-->
+
+
+allowed users to see and modify one line at a time
+
+:w   write the current file to the filesystem
+:w filename    save a copy of the current file
+:w!   force writing to the current file
+:1      Go to line number 1
+:e filename       Open filename
+:q      Quit 
